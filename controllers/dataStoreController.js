@@ -122,62 +122,39 @@ exports.getDataStoreById = async (req, res) => {
   }
 };
 
-// Update DataStore
+// Update DataStore (Only serviceName)
 exports.updateDataStore = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
+    const { serviceName } = req.body; // Only extract serviceName
 
-    // Find the DataStore by id
-    const dataStore = await DataStore.findById(id);
-    if (!dataStore) {
-      return res.status(404).json({ error: 'DataStore not found' });
+    if (!serviceName) {
+      return res.status(400).json({ error: 'serviceName is required for update' });
     }
 
-    // If projectName is included in the update, find the project
-    if (updates.projectName) {
-      const project = await Project.findOne({ projectName: updates.projectName });
-      if (!project) {
-        return res.status(400).json({ error: 'Project not found' });
-      }
-      updates.projectName = project._id; // Set the project ID
-    }
-
-    // Dynamically set organizationName based on subscription
-    const user = await User.findById(dataStore.createdBy); // Assuming createdBy is set when DataStore is created
-    let organization = updates.organizationName || 'Default Organization'; // Default organization
-    if (user.subscription && user.subscription.type === 'FreeTrial') {
-      organization = 'Free Trial Organization';
-    } else if (user.subscription && user.subscription.type === 'Organization') {
-      organization = user.organizationName || 'Paid Organization';
-    }
-
-    updates.organizationName = organization;
-
-    // Update the DataStore with the new data
-    const updatedDataStore = await DataStore.findByIdAndUpdate(id, updates, { new: true });
-    
+    // Find and update only the serviceName field
+    const updatedDataStore = await DataStore.findByIdAndUpdate(
+      id,
+      { serviceName },
+      { new: true } // Return the updated document
+    );
 
     if (!updatedDataStore) {
       return res.status(404).json({ error: 'DataStore not found' });
     }
 
-    const populatedDataStore = await DataStore.findById(updatedDataStore._id)
-      .populate('projectName', 'projectName');
-
     res.status(200).json({
-      _id: populatedDataStore._id,
-      serviceName: populatedDataStore.serviceName,
-      serviceType: populatedDataStore.serviceType,
-      projectId: populatedDataStore.projectName?._id || 'N/A', // Added projectId to the response
-      projectName: populatedDataStore.projectName.projectName,
-      subscription: populatedDataStore.subscription,
-      organizationName: populatedDataStore.organizationName,
-      createdAt: populatedDataStore.createdAt,
-      updatedAt: populatedDataStore.updatedAt,
+      _id: updatedDataStore._id,
+      serviceName: updatedDataStore.serviceName,
+      serviceType: updatedDataStore.serviceType,
+      projectId: updatedDataStore.projectName, // Assuming projectName stores ObjectId
+      subscription: updatedDataStore.subscription,
+      organizationName: updatedDataStore.organizationName,
+      createdAt: updatedDataStore.createdAt,
+      updatedAt: updatedDataStore.updatedAt,
     });
   } catch (err) {
-    console.error(err);
+    console.error('Error updating DataStore:', err);
     res.status(500).json({ error: 'Server error' });
   }
 };
