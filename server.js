@@ -3,51 +3,52 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db'); // Import database connection function
 
-// Route imports
-const userRoutes = require('./routes/userRoutes');
-const webAppRoutes = require('./routes/webAppRoutes');
-const paymentRoutes = require('./routes/paymentRoutes'); // Payment-related routes
-const organizationRoutes = require('./routes/organizationRoutes'); // Organization routes
-const projectRoutes = require('./routes/projectRoutes'); // Project routes
-const addUserRoutes = require('./routes/addUserRoutes'); // Add user routes
-const serviceRoutes = require('./routes/serviceRoutes'); // Service routes
-const hubIngestRoutes = require('./routes/hubingestroutes');
-const subscriptionRoutes = require('./routes/subscriptionRoutes');
-const notificationRoutes = require('./routes/notificationRoutes'); // Notification routes
-const dataStoreRoutes = require('./routes/dataStoreRoutes'); // ✅ Import Data Store Routes
-
 // Load environment variables
 dotenv.config();
 
 const app = express();
 
-// Enable CORS
+// Enable CORS with enhanced configuration
 app.use(
   cors({
     origin: [
-      'https://demoproject-xton.vercel.app', // Production URL (no trailing slash)
-      'http://localhost:3000', // Backend URL
-      'http://localhost:3001', // Frontend URL
-      'http://localhost:3002', // Additional frontend URL
+      'https://demoproject1-topaz.vercel.app', // Production frontend
+      'http://localhost:3000', // Local backend
+      'http://localhost:3001', // Local frontend (port 3001)
+      'http://localhost:3002', // Additional local frontend (port 3002)
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+    credentials: true, // Allow cookies and credentials
   })
 );
 
-// Handle preflight requests explicitly
+// Handle preflight requests for all routes
 app.options('*', cors());
 
 // Middleware to parse JSON and URL-encoded bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Logging middleware
+// Logging middleware for request details
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
   console.log('Headers:', req.headers);
   next();
 });
+
+// Route imports
+const userRoutes = require('./routes/userRoutes');
+const webAppRoutes = require('./routes/webAppRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const organizationRoutes = require('./routes/organizationRoutes');
+const projectRoutes = require('./routes/projectRoutes');
+const addUserRoutes = require('./routes/addUserRoutes');
+const serviceRoutes = require('./routes/serviceRoutes');
+const hubIngestRoutes = require('./routes/hubingestroutes');
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const dataStoreRoutes = require('./routes/dataStoreRoutes');
 
 // Initialize database and start server
 const initializeServer = async () => {
@@ -57,17 +58,17 @@ const initializeServer = async () => {
     console.log('Database connected successfully.');
 
     // Register API routes
-    app.use('/api/user', userRoutes); // User-related routes
-    app.use('/api/webapp', webAppRoutes); // Web app routes
-    app.use('/api/payment', paymentRoutes); // Payment-related routes
-    app.use('/api/org', organizationRoutes); // Organization routes
-    app.use('/api/proj', projectRoutes); // Project routes
-    app.use('/api/add-user', addUserRoutes); // Add user routes
-    app.use('/api', serviceRoutes); // Service routes
+    app.use('/api/user', userRoutes);
+    app.use('/api/webapp', webAppRoutes);
+    app.use('/api/payment', paymentRoutes);
+    app.use('/api/org', organizationRoutes);
+    app.use('/api/proj', projectRoutes);
+    app.use('/api/add-user', addUserRoutes);
+    app.use('/api', serviceRoutes);
     app.use('/api/hubingest', hubIngestRoutes);
     app.use('/api/subscriptions', subscriptionRoutes);
-    app.use('/api/notifications', notificationRoutes); // Add the notification routes here
-    app.use('/api/datastore', dataStoreRoutes); // ✅ Register Data Store Routes
+    app.use('/api/notifications', notificationRoutes);
+    app.use('/api/datastore', dataStoreRoutes);
 
     // Health check route
     app.get('/', (req, res) => {
@@ -88,7 +89,7 @@ const initializeServer = async () => {
       res.status(err.status || 500).json({
         success: false,
         message: err.message || 'Internal Server Error',
-        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }), // Include stack trace in development
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
       });
     });
 
@@ -99,7 +100,7 @@ const initializeServer = async () => {
     });
   } catch (error) {
     console.error('Failed to initialize server:', error.message);
-    process.exit(1); // Exit process if database connection fails
+    process.exit(1);
   }
 };
 
