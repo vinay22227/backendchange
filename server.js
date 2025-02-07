@@ -12,7 +12,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      'https://frontendproject1-two.vercel.app', // Production frontend
+     
       
       'http://localhost:3000', // Local backend
       'http://localhost:3001', // Local frontend (port 3001)
