@@ -4,6 +4,7 @@ const {
   signin,
   updateSubscription,
   getUserDetailsByEmail,
+  autoLogin, // Add this
 } = require('../controllers/userController');
 const { signupValidator, signinValidator } = require('../validators/signupValidators');
 const { validateRequest } = require('../middlewares/validationMiddleware');
@@ -11,6 +12,7 @@ const authenticateUser = require('../middlewares/authenticateUser');
 const Notification = require('../models/notificationModels'); // Import the Notification model
 
 const router = express.Router();
+
 
 // Helper function to create notifications
 const createNotification = async (email, message, type) => {
@@ -79,5 +81,18 @@ router.put('/subscription', authenticateUser, async (req, res, next) => {
   }
 });
 
+
+router.post('/auto-login', async (req, res, next) => {
+  try {
+    await autoLogin(req, res);
+
+    // Create a notification for successful auto-login
+    const { email } = req.body;
+    const message = `Welcome back, ${email}! You have been automatically logged in.`;
+    await createNotification(email, message, 'auto_login');
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

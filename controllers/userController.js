@@ -2,6 +2,7 @@ const {
   registerUser,
   authenticateUser,
   fetchUserDetailsByEmail,
+  autoLoginUser, // Add this to the imports
 } = require('../services/userServices'); // Import services for user logic
 
 const User = require('../models/userModel');
@@ -189,5 +190,46 @@ exports.getUserDetailsByEmail = async (req, res, next) => {
   } catch (error) {
     console.error('Error in getUserDetailsByEmail:', error.message);
     next(error);
+  }
+};
+
+
+
+// Add this to the existing exports in userController.js
+exports.autoLogin = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required.',
+      });
+    }
+
+    const result = await autoLoginUser(email);
+
+    if (!result.success) {
+      return res.status(401).json({
+        success: false,
+        message: result.message,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Auto-login successful',
+      data: {
+        user: result.user,
+        token: result.token,
+      },
+    });
+  } catch (error) {
+    console.error('Error in autoLogin:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Auto-login failed',
+      error: error.message,
+    });
   }
 };

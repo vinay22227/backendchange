@@ -159,3 +159,39 @@ exports.updateSubscriptionAndCreateProject = async (userId, subscriptionName, pr
     throw new Error(`Failed to update subscription and create project: ${error.message}`);
   }
 };
+
+
+// Add this to the existing exports in userServices.js
+exports.autoLoginUser = async (email) => {
+  try {
+    if (!email) {
+      throw new Error('Email is required for auto-login.');
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return {
+        success: false,
+        message: 'User not found',
+      };
+    }
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    // Remove password from user object
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
+
+    return {
+      success: true,
+      message: 'Auto-login successful',
+      user: userWithoutPassword,
+      token,
+    };
+  } catch (error) {
+    console.error('Error in autoLoginUser:', error.message);
+    throw new Error(`Auto-login failed: ${error.message}`);
+  }
+};
