@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: [
      
-      
+       'https://frontendprojects.vercel.app',
       'http://localhost:3000', // Local backend
       'http://localhost:3001', // Local frontend (port 3001)
       'http://localhost:3002', // Additional local frontend (port 3002)
