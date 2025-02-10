@@ -10,6 +10,7 @@ const { signupValidator, signinValidator } = require('../validators/signupValida
 const { validateRequest } = require('../middlewares/validationMiddleware');
 const authenticateUser = require('../middlewares/authenticateUser');
 const Notification = require('../models/notificationModels'); // Import the Notification model
+const { getUsersBySubscriptionType } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -96,3 +97,24 @@ router.post('/auto-login', async (req, res, next) => {
 });
 
 module.exports = router;
+
+
+
+
+
+// Import the new function
+
+
+// Get users by subscription type (FreeTrial or Organization)
+router.get('/subscription/:type', authenticateUser, async (req, res, next) => {
+  try {
+    await getUsersBySubscriptionType(req, res);
+
+    // Create a notification for fetching users by subscription
+    const { type } = req.params;
+    const message = `Fetched users with the subscription type "${type}".`;
+    await createNotification('admin@example.com', message, 'get_users_by_subscription');
+  } catch (error) {
+    next(error);
+  }
+});

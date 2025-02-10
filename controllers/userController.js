@@ -233,3 +233,41 @@ exports.autoLogin = async (req, res, next) => {
     });
   }
 };
+
+
+
+
+// Get Users by Subscription Type
+exports.getUsersBySubscriptionType = async (req, res, next) => {
+  try {
+    const { type } = req.params;
+
+    // Validate subscription type
+    const validSubscriptionTypes = ['FreeTrial', 'Organization'];
+    if (!validSubscriptionTypes.includes(type)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid subscription type. Valid types are: ${validSubscriptionTypes.join(', ')}.`,
+      });
+    }
+
+    // Find users with the given subscription type
+    const users = await User.find({ 'subscription.type': type });
+
+    if (!users.length) {
+      return res.status(404).json({
+        success: false,
+        message: `No users found with the subscription type "${type}".`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Users with subscription type "${type}" retrieved successfully.`,
+      data: users,
+    });
+  } catch (error) {
+    console.error('Error in getUsersBySubscriptionType:', error.message);
+    next(error);
+  }
+};
