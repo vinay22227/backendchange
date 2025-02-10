@@ -106,7 +106,7 @@ module.exports = router;
 
 
 // Get users by subscription type (FreeTrial or Organization)
-router.get('/subscription/:type', authenticateUser, async (req, res, next) => {
+router.get('/subscription/:type', async (req, res, next) => {
   try {
     await getUsersBySubscriptionType(req, res);
 

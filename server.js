@@ -50,6 +50,7 @@ const hubIngestRoutes = require('./routes/hubingestroutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const dataStoreRoutes = require('./routes/dataStoreRoutes');
+const adminRoutes=require('./routes/adminRoutes');
 
 // Initialize database and start server
 const initializeServer = async () => {
@@ -70,6 +71,7 @@ const initializeServer = async () => {
     app.use('/api/subscriptions', subscriptionRoutes);
     app.use('/api/notifications', notificationRoutes);
     app.use('/api/datastore', dataStoreRoutes);
+    app.use('/api/admin',adminRoutes); // Admin routes
 
     // Health check route
     app.get('/', (req, res) => {

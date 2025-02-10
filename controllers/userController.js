@@ -85,7 +85,6 @@ exports.signin = async (req, res, next) => {
 };
 
 // Update Subscription Controller
-// Update Subscription Controller
 exports.updateSubscription = async (req, res, next) => {
   try {
     const { subscriptionType, durationInDays } = req.body;
