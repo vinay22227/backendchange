@@ -12,7 +12,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      'https://project-manager-one-phi.vercel.app',
+      'https://frontendchange.vercel.app',
       'https://admin-ten-sooty.vercel.app',
       'http://localhost:3000', // Local backend
       'http://localhost:3001', // Local frontend (port 3001)
