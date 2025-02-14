@@ -114,5 +114,13 @@ router.post("/reset-password", async (req, res) => {
     console.log(`✅ Password reset successful for ${email}`);
     res.json({ message: "Password reset successful" });
 });
+ // const express = require('express');
+// const { registerUser, loginUser } = require('../controllers/authController');
  
+// const router = express.Router();
+ 
+// router.post('/register', registerUser);
+// router.post('/login', loginUser);
+ 
+// module.exports = router;
 module.exports = router;

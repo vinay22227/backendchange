@@ -52,6 +52,8 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const dataStoreRoutes = require('./routes/dataStoreRoutes');
 const adminRoutes=require('./routes/adminRoutes');
 const authRoutes=require('./routes/authRoutes');
+const deploymentRoutes = require('./routes/deploymentRoutes'); // Deployment routes
+const taskRoutes = require('./routes/taskRoutes'); // Task routes
 
 // Initialize database and start server
 const initializeServer = async () => {
@@ -74,6 +76,9 @@ const initializeServer = async () => {
     app.use('/api/datastore', dataStoreRoutes);
     app.use('/api/admin',adminRoutes); // Admin routes
     app.use('/api/auth',authRoutes);
+    app.use('/api/deployments', deploymentRoutes); // Deployment routes
+    app.use('/api/tasks', taskRoutes); // Task routes
+    
 
     // Health check route
     app.get('/', (req, res) => {
